@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Quiz : Routine, heures et verbes pronominaux</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(145deg, #f5f7fc 0%, #e9eef5 100%);
+            padding: 2rem 1rem;
+            color: #1e2a3a;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .quiz-header {
+            background: white;
+            border-radius: 2rem;
+            padding: 1.5rem 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            color: #0f3b5c;
+            margin-bottom: 0.5rem;
+        }
+
+        .sub {
+            color: #4a627a;
+            margin-bottom: 1rem;
+        }
+
+        .progress-stats {
+            display: flex;
+            justify-content: space-between;
+            background: #f0f4f9;
+            padding: 0.8rem 1.2rem;
+            border-radius: 3rem;
+            margin-top: 0.8rem;
+            font-weight: 500;
+        }
+
+        .question-card {
+            background: white;
+            border-radius: 2rem;
+            padding: 1.8rem 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+            transition: all 0.2s;
+        }
+
+        .question-text {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            line-height: 1.3;
+            border-left: 5px solid #2c7da0;
+            padding-left: 1.2rem;
+        }
+
+        .question-type-badge {
+            display: inline-block;
+            background: #d9e6f2;
+            color: #0f3b5c;
+            border-radius: 2rem;
+            padding: 0.2rem 1rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            letter-spacing: 0.5px;
+        }
+
+        .options-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.9rem;
+            margin: 1.5rem 0;
+        }
+
+        .option {
+            background: #f8fafd;
+            border: 2px solid #e2e8f0;
+            border-radius: 1.5rem;
+            padding: 0.9rem 1.2rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 1rem;
+        }
+
+        .option:hover {
+            background: #eef2f9;
+            border-color: #90b4ce;
+        }
+
+        .option.selected {
+            background: #d4e3fd;
+            border-color: #2c7da0;
+            color: #0a2e44;
+            font-weight: 500;
+        }
+
+        .answer-input {
+            width: 100%;
+            padding: 1rem;
+            font-size: 1rem;
+            border: 2px solid #cbd5e1;
+            border-radius: 1.5rem;
+            font-family: inherit;
+            margin: 1rem 0;
+            transition: 0.2s;
+        }
+
+        .answer-input:focus {
+            outline: none;
+            border-color: #2c7da0;
+            box-shadow: 0 0 0 3px rgba(44,125,160,0.2);
+        }
+
+        .image-prompt {
+            background: #f1f5f9;
+            border-radius: 1.2rem;
+            padding: 1rem;
+            text-align: center;
+            margin: 1rem 0;
+            font-style: italic;
+            color: #2c3e4e;
+        }
+
+        .photo-icon {
+            font-size: 3rem;
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+
+        .feedback {
+            margin-top: 1rem;
+            padding: 0.8rem;
+            border-radius: 1rem;
+            font-weight: 500;
+            display: none;
+        }
+
+        .feedback.correct {
+            background: #d1fae5;
+            color: #065f46;
+            display: block;
+            border-left: 5px solid #10b981;
+        }
+
+        .feedback.wrong {
+            background: #fee2e2;
+            color: #991b1b;
+            display: block;
+            border-left: 5px solid #ef4444;
+        }
+
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 1rem;
+            gap: 1rem;
+        }
+
+        button {
+            background: #2c7da0;
+            color: white;
+            border: none;
+            padding: 0.8rem 1.6rem;
+            border-radius: 2rem;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        button:hover {
+            background: #1f5e7a;
+            transform: scale(0.97);
+        }
+
+        button:disabled {
+            background: #b9cfdf;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .submit-quiz {
+            background: #0f5b3a;
+            margin-top: 0.5rem;
+            width: 100%;
+            font-size: 1.2rem;
+            padding: 1rem;
+        }
+
+        .results {
+            background: white;
+            border-radius: 2rem;
+            padding: 1.8rem;
+            text-align: center;
+            margin-top: 1rem;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 2rem;
+            font-size: 0.8rem;
+            color: #5e727e;
+        }
+
+        @media (max-width: 650px) {
+            .question-card {
+                padding: 1.2rem;
+            }
+            .question-text {
+                font-size: 1.2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="quiz-header">
+        <h1>⏰ Quiz : routine, heures & verbes pronominaux</h1>
+        <div class="sub">Testez vos connaissances en français</div>
+        <div class="progress-stats">
+            <span>Question <span id="currentIndexDisplay">1</span> / <span id="totalQuestionsSpan">0</span></span>
+            <span>✅ Réponses enregistrées : <span id="answeredCount">0</span></span>
+        </div>
+    </div>
+
+    <div id="quizArea"></div>
+    <div id="resultsArea" class="results hidden"></div>
+    <footer>Quiz alterné - QCM, traductions, descriptions d’images</footer>
+</div>
+
+<script>
+    // ---------- 30 QUESTIONS EN FRANÇAIS, TYPES MÉLANGÉS ----------
+    const questions = [
+        // 1. QCM
+        { type: "mcq", text: "Comment dit-on « je me réveille » en espagnol ? (sens inverse pour tester la connaissance)", options: ["Me despierto", "Me levanto", "Me acuesto", "Me visto"], correct: "Me despierto" },
+        // 2. Traduction (espagnol -> français)
+        { type: "translation", text: "Traduis en français : « Je me lève à sept heures moins le quart. »", correctAnswer: "Je me lève à sept heures moins le quart." },
+        // 3. Photo (description)
+        { type: "photo", text: "📸 Photo : Un réveil affiche 7h20 et une personne sort du lit. Décris cette action en français (heure + verbe pronominal).", correctAnswer: "Il se réveille à sept heures vingt." },
+        // 4. QCM
+        { type: "mcq", text: "Quelle est la forme correcte du verbe pronominal pour « Nous nous couchons » ?", options: ["Nous se couchons", "Nous nous couchons", "On se couche", "Nous couchons"], correct: "Nous nous couchons" },
+        // 5. Traduction
+        { type: "translation", text: "Traduis en français : « Ella se ducha a las ocho y media. »", correctAnswer: "Elle se douche à huit heures et demie." },
+        // 6. Photo
+        { type: "photo", text: "📸 Photo : Une personne se brosse les dents devant un miroir, horloge murale indique 22h15. Fais une phrase.", correctAnswer: "Elle se brosse les dents à vingt-deux heures quinze." },
+        // 7. QCM (faire)
+        { type: "mcq", text: "Complète avec la bonne forme de « faire » : « Le dimanche, nous ______ du vélo. »", options: ["faisons", "font", "fait", "fais"], correct: "faisons" },
+        // 8. Traduction
+        { type: "translation", text: "Traduis en français : « Ils se préparent pour l’école. »", correctAnswer: "Ils se préparent pour l'école." },
+        // 9. QCM (heure)
+        { type: "mcq", text: "Quelle heure est-il ? (9:55)", options: ["Il est neuf heures cinquante-cinq", "Il est dix heures moins cinq", "Il est neuf heures et demie", "Les deux premières réponses sont correctes"], correct: "Les deux premières réponses sont correctes" },
+        // 10. Photo
+        { type: "photo", text: "📸 Photo : Une tasse de café, un croissant et une horloge indiquant 8h00. Décris ce que la personne fait (utilise « prendre le petit-déjeuner »).", correctAnswer: "Il prend le petit-déjeuner à huit heures." },
+        // 11. QCM (verbe pronominal)
+        { type: "mcq", text: "« Se maquiller » signifie :", options: ["Se laver le visage", "Mettre du maquillage", "Se coiffer", "S'habiller"], correct: "Mettre du maquillage" },
+        // 12. Traduction
+        { type: "translation", text: "Traduis en français : « À quelle heure te lèves-tu ? »", correctAnswer: "À quelle heure te lèves-tu ?" },
+        // 13. Photo
+        { type: "photo", text: "📸 Photo : Un enfant met son pyjama, la lune brille, horloge indique 21h30. Fais une phrase.", correctAnswer: "Il se prépare pour dormir à vingt et une heures trente." },
+        // 14. QCM (routine + heures)
+        { type: "mcq", text: "Complète : « Elle ______ à minuit. » (elle se couche)", options: ["se lève", "se couche", "se réveille", "s'endort"], correct: "se couche" },
+        // 15. Traduction
+        { type: "translation", text: "Traduis en français : « Nous faisons la vaisselle après le dîner. »", correctAnswer: "Nous faisons la vaisselle après le dîner." },
+        // 16. QCM (faire/joker)
+        { type: "mcq", text: "Le verbe « faire » est utilisé dans quelle expression ?", options: ["faire du sport", "jouer au foot", "se promener", "dormir"], correct: "faire du sport" },
+        // 17. Photo
+        { type: "photo", text: "📸 Photo : Deux amis qui courent dans un parc, un panneau indique 10h15. Écris une phrase avec « faire » et l’heure.", correctAnswer: "Ils font du sport à dix heures et quart." },
+        // 18. QCM (verbe pronominal)
+        { type: "mcq", text: "Choisis la phrase correcte :", options: ["Je me douche à sept heures.", "Je me douche à sept heures moins quart.", "Je douche à sept heures.", "Je me doucherai à sept heures."], correct: "Je me douche à sept heures." },
+        // 19. Traduction
+        { type: "translation", text: "Traduis en français : « María se lave les mains avant de manger. »", correctAnswer: "María se lave les mains avant de manger." },
+        // 20. Photo
+        { type: "photo", text: "📸 Photo : Un agenda ouvert avec « cours de français » écrit et une horloge marquant 9h00. Fais une phrase.", correctAnswer: "J'ai cours de français à neuf heures." },
+        // 21. QCM (heure officielle)
+        { type: "mcq", text: "Comment dit-on « il est 13h45 » en français courant ?", options: ["Il est une heure quarante-cinq", "Il est deux heures moins le quart", "Il est treize heures quarante-cinq", "Il est une heure moins le quart"], correct: "Il est une heure quarante-cinq" },
+        // 22. Traduction
+        { type: "translation", text: "Traduis en français : « Ils s’amusent le week-end. » (verbe pronominal s’amuser)", correctAnswer: "Ils s'amusent le week-end." },
+        // 23. QCM (routine mixte)
+        { type: "mcq", text: "Que signifie « se raser » ?", options: ["Se couper les cheveux", "Se faire la barbe", "Se laver", "Se peigner"], correct: "Se faire la barbe" },
+        // 24. Photo
+        { type: "photo", text: "📸 Photo : Une personne qui se lave le visage, horloge indique 6h45. Décris la scène.", correctAnswer: "Elle se lave le visage à sept heures moins le quart." },
+        // 25. QCM (faire)
+        { type: "mcq", text: "Complète : « Tu ______ ton lit ? »", options: ["fais", "fait", "faire", "font"], correct: "fais" },
+        // 26. Traduction
+        { type: "translation", text: "Traduis en français : « Nous faisons une pause à dix heures et demie. »", correctAnswer: "Nous faisons une pause à dix heures et demie." },
+        // 27. Photo
+        { type: "photo", text: "📸 Photo : Un réveil digital affiche 7h05 et une personne s'étire. Décris.", correctAnswer: "Il se réveille à sept heures cinq." },
+        // 28. QCM (heure + pronominal)
+        { type: "mcq", text: "Quelle phrase décrit correctement l’image mentale : une personne se couche à 22h50 ?", options: ["Elle se couche à onze heures moins dix.", "Elle se couche à vingt-deux heures cinquante.", "Elle se lève à vingt-deux heures cinquante.", "Elle se couche à dix heures et demie."], correct: "Elle se couche à vingt-deux heures cinquante." },
+        // 29. Traduction
+        { type: "translation", text: "Traduis en français : « Je me brosse les dents après le petit-déjeuner. »", correctAnswer: "Je me brosse les dents après le petit-déjeuner." },
+        // 30. Photo (dernière question)
+        { type: "photo", text: "📸 Photo : Un vélo et un casque, horloge de gare indiquant 8h30. Phrase avec « faire » et l’heure.", correctAnswer: "Il fait du vélo à huit heures et demie." }
+    ];
+
+    const totalQuestions = questions.length;
+    document.getElementById("totalQuestionsSpan").innerText = totalQuestions;
+
+    let userAnswers = new Array(totalQuestions).fill(null);
+    let currentIndex = 0;
+    let quizSubmitted = false;
+
+    const quizArea = document.getElementById("quizArea");
+    const resultsArea = document.getElementById("resultsArea");
+    const currentIndexDisplay = document.getElementById("currentIndexDisplay");
+    const answeredCountSpan = document.getElementById("answeredCount");
+
+    function updateAnsweredStats() {
+        let count = userAnswers.filter(ans => ans !== null && ans.trim() !== "").length;
+        answeredCountSpan.innerText = count;
+    }
+
+    function saveAnswer(value) {
+        if (quizSubmitted) return;
+        userAnswers[currentIndex] = value;
+        updateAnsweredStats();
+        renderCurrentQuestion(); // re-render pour afficher sélection et feedback
+    }
+
+    function isAnswerCorrect(question, answer) {
+        if (!answer || answer.trim() === "") return false;
+        if (question.type === "mcq") {
+            return answer === question.correct;
+        } else if (question.type === "translation" || question.type === "photo") {
+            let normalizedUser = answer.trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+            let normalizedCorrect = question.correctAnswer.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+            return normalizedUser === normalizedCorrect;
+        }
+        return false;
+    }
+
+    function getFeedbackHtml(question, currentAnswer) {
+        if (!currentAnswer || currentAnswer === "") return "";
+        const correctBool = isAnswerCorrect(question, currentAnswer);
+        if (correctBool) {
+            return `<div class="feedback correct">✅ Correct ! Bonne réponse.</div>`;
+        } else {
+            let expectedMsg = "";
+            if (question.type === "mcq") expectedMsg = ` Réponse attendue : ${question.correct}.`;
+            else if (question.type === "translation" || question.type === "photo") expectedMsg = ` Réponse attendue : ${question.correctAnswer}.`;
+            return `<div class="feedback wrong">❌ Incorrect.${expectedMsg}</div>`;
+        }
+    }
+
+    function escapeHtml(str) {
+        if (!str) return "";
+        return str.replace(/[&<>]/g, function(m) {
+            if (m === '&') return '&amp;';
+            if (m === '<') return '&lt;';
+            if (m === '>') return '&gt;';
+            return m;
+        }).replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g, function(c) {
+            return c;
+        });
+    }
+
+    function renderCurrentQuestion() {
+        if (quizSubmitted) return;
+        const q = questions[currentIndex];
+        if (!q) return;
+
+        let typeLabel = "";
+        if (q.type === "mcq") typeLabel = "🔘 QCM";
+        else if (q.type === "translation") typeLabel = "🌍 Traduction (espagnol → français)";
+        else if (q.type === "photo") typeLabel = "🖼️ Décris l'image";
+
+        let innerHtml = `<div class="question-card">
+            <div class="question-type-badge">${typeLabel}</div>
+            <div class="question-text">${escapeHtml(q.text)}</div>`;
+
+        const currentAnswer = userAnswers[currentIndex] || "";
+
+        if (q.type === "mcq") {
+            innerHtml += `<div class="options-list">`;
+            q.options.forEach(opt => {
+                const isSelected = (currentAnswer === opt);
+                const selectedClass = isSelected ? "selected" : "";
+                innerHtml += `<div class="option ${selectedClass}" data-opt="${escapeHtml(opt)}">${escapeHtml(opt)}</div>`;
+            });
+            innerHtml += `</div>`;
+        }
+        else if (q.type === "translation" || q.type === "photo") {
+            innerHtml += `<textarea class="answer-input" rows="2" placeholder="Écris ta réponse en français...">${escapeHtml(currentAnswer)}</textarea>`;
+            if (q.type === "photo") {
+                innerHtml += `<div class="image-prompt"><span class="photo-icon">📸✨</span> Inspire-toi de la description pour rédiger une phrase complète.</div>`;
+            }
+        }
+
+        innerHtml += getFeedbackHtml(q, currentAnswer);
+        innerHtml += `<div class="nav-buttons">
+                        <button id="prevBtn" ${currentIndex === 0 ? 'disabled' : ''}>◀ Question précédente</button>
+                        <button id="nextBtn" ${currentIndex === totalQuestions-1 ? 'disabled' : ''}>Question suivante ▶</button>
+                      </div>`;
+        innerHtml += `</div>`;
+        quizArea.innerHTML = innerHtml;
+
+        // Attacher événements
+        if (q.type === "mcq") {
+            document.querySelectorAll('.option').forEach(optDiv => {
+                optDiv.addEventListener('click', (e) => {
+                    if (quizSubmitted) return;
+                    const selectedValue = optDiv.getAttribute('data-opt');
+                    saveAnswer(selectedValue);
+                });
+            });
+        } else {
+            const textarea = document.querySelector('.answer-input');
+            if (textarea) {
+                textarea.addEventListener('input', (e) => {
+                    if (quizSubmitted) return;
+                    saveAnswer(e.target.value);
+                });
+            }
+        }
+
+        document.getElementById('prevBtn')?.addEventListener('click', () => {
+            if (currentIndex > 0 && !quizSubmitted) {
+                currentIndex--;
+                updateCurrentDisplay();
+                renderCurrentQuestion();
+            }
+        });
+        document.getElementById('nextBtn')?.addEventListener('click', () => {
+            if (currentIndex < totalQuestions-1 && !quizSubmitted) {
+                currentIndex++;
+                updateCurrentDisplay();
+                renderCurrentQuestion();
+            }
+        });
+    }
+
+    function updateCurrentDisplay() {
+        currentIndexDisplay.innerText = currentIndex + 1;
+    }
+
+    // Afficher les résultats finaux
+    function submitQuiz() {
+        if (quizSubmitted) return;
+        quizSubmitted = true;
+
+        let score = 0;
+        for (let i = 0; i < totalQuestions; i++) {
+            const q = questions[i];
+            const ans = userAnswers[i];
+            if (ans && isAnswerCorrect(q, ans)) score++;
+        }
+        const percent = Math.round((score / totalQuestions) * 100);
+        let resultHtml = `<h2>🏆 Résultat final</h2>
+                          <p style="font-size: 1.8rem; font-weight: bold;">${score} / ${totalQuestions}</p>
+                          <p>Soit ${percent}% de bonnes réponses.</p>
+                          <button id="restartQuiz">⟳ Recommencer le quiz</button>`;
+        resultsArea.innerHTML = resultHtml;
+        resultsArea.classList.remove("hidden");
+        document.getElementById("restartQuiz")?.addEventListener("click", () => {
+            // réinitialisation complète
+            userAnswers = new Array(totalQuestions).fill(null);
+            currentIndex = 0;
+            quizSubmitted = false;
+            updateAnsweredStats();
+            updateCurrentDisplay();
+            resultsArea.classList.add("hidden");
+            renderCurrentQuestion();
+        });
+
+        // Désactiver les interactions dans la zone quiz
+        quizArea.innerHTML = `<div style="text-align:center; padding:2rem;">✨ Quiz terminé. Voir résultats ci-dessous. ✨</div>`;
+    }
+
+    // Ajouter un bouton de soumission final sous la navigation
+    function addSubmitButton() {
+        const submitBtnContainer = document.createElement('div');
+        submitBtnContainer.style.marginTop = '1rem';
+        submitBtnContainer.innerHTML = `<button id="finalSubmitBtn" class="submit-quiz">📋 Terminer le quiz et voir les résultats</button>`;
+        quizArea.insertAdjacentElement('afterend', submitBtnContainer);
+        document.getElementById('finalSubmitBtn')?.addEventListener('click', () => {
+            if (!quizSubmitted) submitQuiz();
+        });
+    }
+
+    // Initialisation
+    function init() {
+        updateCurrentDisplay();
+        updateAnsweredStats();
+        renderCurrentQuestion();
+        addSubmitButton();
+    }
+    init();
+</script>
+</body>
+</html>
+```
