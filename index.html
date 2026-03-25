@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>Quiz : Routine, heures et verbes pronominaux</title>
+    <title>Quiz : Routine, heures, verbes pronominaux et faire</title>
     <style>
         * {
             box-sizing: border-box;
@@ -167,6 +167,14 @@
             border-left: 5px solid #ef4444;
         }
 
+        .warning-message {
+            color: #b45309;
+            font-size: 0.85rem;
+            margin-top: 0.25rem;
+            margin-bottom: 0.5rem;
+            display: none;
+        }
+
         .nav-buttons {
             display: flex;
             justify-content: space-between;
@@ -239,7 +247,7 @@
 <div class="container">
     <div class="quiz-header">
         <h1>⏰ Quiz : routine, heures & verbes pronominaux</h1>
-        <div class="sub">Testez vos connaissances en français</div>
+        <div class="sub">Testez vos connaissances en français (traductions depuis l'espagnol)</div>
         <div class="progress-stats">
             <span>Question <span id="currentIndexDisplay">1</span> / <span id="totalQuestionsSpan">0</span></span>
             <span>✅ Réponses enregistrées : <span id="answeredCount">0</span></span>
@@ -248,17 +256,17 @@
 
     <div id="quizArea"></div>
     <div id="resultsArea" class="results hidden"></div>
-    <footer>Quiz alterné - QCM, traductions, descriptions d’images</footer>
+    <footer>Quiz alterné - QCM, traductions (espagnol→français), descriptions d’images</footer>
 </div>
 
 <script>
-    // ---------- 30 QUESTIONS EN FRANÇAIS, TYPES MÉLANGÉS ----------
+    // ---------- 30 QUESTIONS MÉLANGÉES, TOUTES LES TRADUCTIONS SONT DE L'ESPAGNOL VERS LE FRANÇAIS ----------
     const questions = [
         // 1. QCM
-        { type: "mcq", text: "Comment dit-on « je me réveille » en espagnol ? (sens inverse pour tester la connaissance)", options: ["Me despierto", "Me levanto", "Me acuesto", "Me visto"], correct: "Me despierto" },
+        { type: "mcq", text: "Comment dit-on « je me réveille » en français ?", options: ["Je me lève", "Je me réveille", "Je me couche", "Je m'endors"], correct: "Je me réveille" },
         // 2. Traduction (espagnol -> français)
-        { type: "translation", text: "Traduis en français : « Je me lève à sept heures moins le quart. »", correctAnswer: "Je me lève à sept heures moins le quart." },
-        // 3. Photo (description)
+        { type: "translation", text: "Traduis en français : « Me levanto a las siete menos cuarto. »", correctAnswer: "Je me lève à sept heures moins le quart." },
+        // 3. Photo
         { type: "photo", text: "📸 Photo : Un réveil affiche 7h20 et une personne sort du lit. Décris cette action en français (heure + verbe pronominal).", correctAnswer: "Il se réveille à sept heures vingt." },
         // 4. QCM
         { type: "mcq", text: "Quelle est la forme correcte du verbe pronominal pour « Nous nous couchons » ?", options: ["Nous se couchons", "Nous nous couchons", "On se couche", "Nous couchons"], correct: "Nous nous couchons" },
@@ -269,21 +277,21 @@
         // 7. QCM (faire)
         { type: "mcq", text: "Complète avec la bonne forme de « faire » : « Le dimanche, nous ______ du vélo. »", options: ["faisons", "font", "fait", "fais"], correct: "faisons" },
         // 8. Traduction
-        { type: "translation", text: "Traduis en français : « Ils se préparent pour l’école. »", correctAnswer: "Ils se préparent pour l'école." },
+        { type: "translation", text: "Traduis en français : « Ellos se preparan para la escuela. »", correctAnswer: "Ils se préparent pour l'école." },
         // 9. QCM (heure)
-        { type: "mcq", text: "Quelle heure est-il ? (9:55)", options: ["Il est neuf heures cinquante-cinq", "Il est dix heures moins cinq", "Il est neuf heures et demie", "Les deux premières réponses sont correctes"], correct: "Les deux premières réponses sont correctes" },
+        { type: "mcq", text: "Quelle heure est-il ? (9:55) (choisis la bonne réponse)", options: ["Il est neuf heures cinquante-cinq", "Il est dix heures moins cinq", "Il est neuf heures et demie", "Les deux premières réponses sont correctes"], correct: "Les deux premières réponses sont correctes" },
         // 10. Photo
         { type: "photo", text: "📸 Photo : Une tasse de café, un croissant et une horloge indiquant 8h00. Décris ce que la personne fait (utilise « prendre le petit-déjeuner »).", correctAnswer: "Il prend le petit-déjeuner à huit heures." },
         // 11. QCM (verbe pronominal)
         { type: "mcq", text: "« Se maquiller » signifie :", options: ["Se laver le visage", "Mettre du maquillage", "Se coiffer", "S'habiller"], correct: "Mettre du maquillage" },
         // 12. Traduction
-        { type: "translation", text: "Traduis en français : « À quelle heure te lèves-tu ? »", correctAnswer: "À quelle heure te lèves-tu ?" },
+        { type: "translation", text: "Traduis en français : « ¿A qué hora te levantas? »", correctAnswer: "À quelle heure te lèves-tu ?" },
         // 13. Photo
         { type: "photo", text: "📸 Photo : Un enfant met son pyjama, la lune brille, horloge indique 21h30. Fais une phrase.", correctAnswer: "Il se prépare pour dormir à vingt et une heures trente." },
         // 14. QCM (routine + heures)
         { type: "mcq", text: "Complète : « Elle ______ à minuit. » (elle se couche)", options: ["se lève", "se couche", "se réveille", "s'endort"], correct: "se couche" },
         // 15. Traduction
-        { type: "translation", text: "Traduis en français : « Nous faisons la vaisselle après le dîner. »", correctAnswer: "Nous faisons la vaisselle après le dîner." },
+        { type: "translation", text: "Traduis en français : « Nosotros hacemos los deberes por la tarde. »", correctAnswer: "Nous faisons les devoirs l'après-midi." },
         // 16. QCM (faire/joker)
         { type: "mcq", text: "Le verbe « faire » est utilisé dans quelle expression ?", options: ["faire du sport", "jouer au foot", "se promener", "dormir"], correct: "faire du sport" },
         // 17. Photo
@@ -291,13 +299,13 @@
         // 18. QCM (verbe pronominal)
         { type: "mcq", text: "Choisis la phrase correcte :", options: ["Je me douche à sept heures.", "Je me douche à sept heures moins quart.", "Je douche à sept heures.", "Je me doucherai à sept heures."], correct: "Je me douche à sept heures." },
         // 19. Traduction
-        { type: "translation", text: "Traduis en français : « María se lave les mains avant de manger. »", correctAnswer: "María se lave les mains avant de manger." },
+        { type: "translation", text: "Traduis en français : « María se lava las manos antes de comer. »", correctAnswer: "María se lave les mains avant de manger." },
         // 20. Photo
         { type: "photo", text: "📸 Photo : Un agenda ouvert avec « cours de français » écrit et une horloge marquant 9h00. Fais une phrase.", correctAnswer: "J'ai cours de français à neuf heures." },
         // 21. QCM (heure officielle)
         { type: "mcq", text: "Comment dit-on « il est 13h45 » en français courant ?", options: ["Il est une heure quarante-cinq", "Il est deux heures moins le quart", "Il est treize heures quarante-cinq", "Il est une heure moins le quart"], correct: "Il est une heure quarante-cinq" },
         // 22. Traduction
-        { type: "translation", text: "Traduis en français : « Ils s’amusent le week-end. » (verbe pronominal s’amuser)", correctAnswer: "Ils s'amusent le week-end." },
+        { type: "translation", text: "Traduis en français : « Ellos se divierten los fines de semana. »", correctAnswer: "Ils s'amusent le week-end." },
         // 23. QCM (routine mixte)
         { type: "mcq", text: "Que signifie « se raser » ?", options: ["Se couper les cheveux", "Se faire la barbe", "Se laver", "Se peigner"], correct: "Se faire la barbe" },
         // 24. Photo
@@ -305,14 +313,14 @@
         // 25. QCM (faire)
         { type: "mcq", text: "Complète : « Tu ______ ton lit ? »", options: ["fais", "fait", "faire", "font"], correct: "fais" },
         // 26. Traduction
-        { type: "translation", text: "Traduis en français : « Nous faisons une pause à dix heures et demie. »", correctAnswer: "Nous faisons une pause à dix heures et demie." },
+        { type: "translation", text: "Traduis en français : « Hacemos una pausa a las diez y media. »", correctAnswer: "Nous faisons une pause à dix heures et demie." },
         // 27. Photo
         { type: "photo", text: "📸 Photo : Un réveil digital affiche 7h05 et une personne s'étire. Décris.", correctAnswer: "Il se réveille à sept heures cinq." },
         // 28. QCM (heure + pronominal)
         { type: "mcq", text: "Quelle phrase décrit correctement l’image mentale : une personne se couche à 22h50 ?", options: ["Elle se couche à onze heures moins dix.", "Elle se couche à vingt-deux heures cinquante.", "Elle se lève à vingt-deux heures cinquante.", "Elle se couche à dix heures et demie."], correct: "Elle se couche à vingt-deux heures cinquante." },
         // 29. Traduction
-        { type: "translation", text: "Traduis en français : « Je me brosse les dents après le petit-déjeuner. »", correctAnswer: "Je me brosse les dents après le petit-déjeuner." },
-        // 30. Photo (dernière question)
+        { type: "translation", text: "Traduis en français : « Me cepillo los dientes después del desayuno. »", correctAnswer: "Je me brosse les dents après le petit-déjeuner." },
+        // 30. Photo
         { type: "photo", text: "📸 Photo : Un vélo et un casque, horloge de gare indiquant 8h30. Phrase avec « faire » et l’heure.", correctAnswer: "Il fait du vélo à huit heures et demie." }
     ];
 
@@ -337,7 +345,15 @@
         if (quizSubmitted) return;
         userAnswers[currentIndex] = value;
         updateAnsweredStats();
-        renderCurrentQuestion(); // re-render pour afficher sélection et feedback
+        renderCurrentQuestion(); // re-render pour afficher sélection, feedback et message d'avertissement
+    }
+
+    // Vérifie si la réponse est suffisamment longue (pour éviter les réponses trop courtes)
+    function isAnswerTooShort(answer, questionType) {
+        if (!answer) return false;
+        if (questionType === "mcq") return false;
+        // Pour les traductions et photos, on exige au moins 3 caractères (pour éviter les réponses vides ou trop courtes)
+        return answer.trim().length < 3;
     }
 
     function isAnswerCorrect(question, answer) {
@@ -354,6 +370,10 @@
 
     function getFeedbackHtml(question, currentAnswer) {
         if (!currentAnswer || currentAnswer === "") return "";
+        // Vérifier si trop court pour donner un message spécifique
+        if (isAnswerTooShort(currentAnswer, question.type)) {
+            return `<div class="feedback wrong">⚠️ Réponse trop courte. Essaie d'écrire une phrase complète en français.</div>`;
+        }
         const correctBool = isAnswerCorrect(question, currentAnswer);
         if (correctBool) {
             return `<div class="feedback correct">✅ Correct ! Bonne réponse.</div>`;
@@ -403,9 +423,15 @@
             innerHtml += `</div>`;
         }
         else if (q.type === "translation" || q.type === "photo") {
-            innerHtml += `<textarea class="answer-input" rows="2" placeholder="Écris ta réponse en français...">${escapeHtml(currentAnswer)}</textarea>`;
+            innerHtml += `<textarea class="answer-input" rows="2" placeholder="Écris ta réponse en français (phrase complète)...">${escapeHtml(currentAnswer)}</textarea>`;
             if (q.type === "photo") {
                 innerHtml += `<div class="image-prompt"><span class="photo-icon">📸✨</span> Inspire-toi de la description pour rédiger une phrase complète.</div>`;
+            }
+            // Ajout d'un message d'avertissement si la réponse est trop courte
+            if (currentAnswer && currentAnswer.trim().length > 0 && currentAnswer.trim().length < 3) {
+                innerHtml += `<div class="warning-message" style="display:block; color:#b91c1c;">✏️ Ta réponse est très courte. Essaie d'écrire une phrase entière.</div>`;
+            } else {
+                innerHtml += `<div class="warning-message"></div>`;
             }
         }
 
@@ -456,7 +482,6 @@
         currentIndexDisplay.innerText = currentIndex + 1;
     }
 
-    // Afficher les résultats finaux
     function submitQuiz() {
         if (quizSubmitted) return;
         quizSubmitted = true;
@@ -465,17 +490,17 @@
         for (let i = 0; i < totalQuestions; i++) {
             const q = questions[i];
             const ans = userAnswers[i];
-            if (ans && isAnswerCorrect(q, ans)) score++;
+            if (ans && !isAnswerTooShort(ans, q.type) && isAnswerCorrect(q, ans)) score++;
         }
         const percent = Math.round((score / totalQuestions) * 100);
         let resultHtml = `<h2>🏆 Résultat final</h2>
                           <p style="font-size: 1.8rem; font-weight: bold;">${score} / ${totalQuestions}</p>
                           <p>Soit ${percent}% de bonnes réponses.</p>
+                          <p><small>⚠️ Les réponses trop courtes (moins de 3 caractères) ont été comptées comme incorrectes.</small></p>
                           <button id="restartQuiz">⟳ Recommencer le quiz</button>`;
         resultsArea.innerHTML = resultHtml;
         resultsArea.classList.remove("hidden");
         document.getElementById("restartQuiz")?.addEventListener("click", () => {
-            // réinitialisation complète
             userAnswers = new Array(totalQuestions).fill(null);
             currentIndex = 0;
             quizSubmitted = false;
@@ -485,11 +510,9 @@
             renderCurrentQuestion();
         });
 
-        // Désactiver les interactions dans la zone quiz
-        quizArea.innerHTML = `<div style="text-align:center; padding:2rem;">✨ Quiz terminé. Voir résultats ci-dessous. ✨</div>`;
+        quizArea.innerHTML = `<div style="text-align:center; padding:2rem;">✨ Quiz terminé. Voir les résultats ci-dessous. ✨</div>`;
     }
 
-    // Ajouter un bouton de soumission final sous la navigation
     function addSubmitButton() {
         const submitBtnContainer = document.createElement('div');
         submitBtnContainer.style.marginTop = '1rem';
@@ -500,7 +523,6 @@
         });
     }
 
-    // Initialisation
     function init() {
         updateCurrentDisplay();
         updateAnsweredStats();
@@ -511,4 +533,3 @@
 </script>
 </body>
 </html>
-```
